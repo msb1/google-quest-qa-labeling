@@ -1,2 +1,12 @@
-# google-quest-qa-labeling
-  Automated Understanding of Complex Question Answer Content
+<h4>Google QUEST Q&A Labeling</h4>
+<h6>Automated Understanding of Complex Question Answer Content</h6>
+<ol>
+<li>Improving automated understanding of complex question answer content - sponsored by Google on Kaggle</li>
+<li>Model uses this new dataset to build a predictive algorithm for different subjective aspects of question-answering. The question-answer pairs were gathered from nearly 70 different websites, in a "common-sense" fashion by Crowdsource</li>
+<li>Questions and answers with 30 classifiers regarding subjective nature of question answer pairs are included in dataset</li>
+<li>Text preprocessing is performed manually - removal of punctuation, numbers, symbols, single or two character words - followed by tokenization with Keras tokenizer. Spacy large model with Spacy document cleaning was used first but results were not as good. First all negation words were removed from a stop words list downloaded from Gensim. In question-answer evaluation, negation is very important. Also, Spacy did not remove all words with two characters or less and did not remove all symbols without removing additional content. Most of the time Spacy works well, but when results are not as expected - ALWAYS check preprocessing as it can have dramatic effects of the results</li>
+<li>Additional preprocessing was done with the labels; although all labels had values [0, 1], some were all close to 1 or zero. The MinMaxScaler from Scikits was used on the labels to ensure they spanned [0, 1]. This showed an improvement in the loss (binary crossentropy) and metric (mean absolute error)</li>
+<li>Google requested that the Spearman Rho Correlation be used for each entry to compare ranking of labels between target and predicted values. Unfortunately, the Spearman Rho Correlation does not work well as a custom loss function so binary crossnentropy is chosen for each label. Note that the Spearman Correlation is run on all train and validation entries after training has been completed. A mean and std deviation score is then generated for both training and validation samples. The stats.spearmanr function is used from Python Scipy for this purpose.</li>
+<li>A parallel two layer bidirectional lstm with mulithead attention is used for both tokenized questions and answers. These models are then concatenated into a linear layer with ReLU activation followed by an output linear layer with sigmoid activation.</li>
+<li>A bi-lstm model with attention is implemented here as opposed to a blended Hugging Face transformer (e.g., BERT, RoBertA, XLNet) since it can be run on a CPU as opposed to multiples of TPU's.</li>
+</ol>
